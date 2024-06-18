@@ -1,6 +1,6 @@
 import { initialize } from 'launchdarkly-js-client-sdk';
 import { AsyncProviderConfig } from './types';
-import reactContext from './context';
+import context from './context';
 import { getContextOrUser } from './utils';
 import wrapperOptions from './wrapperOptions';
 import asyncWithCustomLDProvider from './asyncWithCustomLDProvider';
@@ -31,9 +31,9 @@ import asyncWithCustomLDProvider from './asyncWithCustomLDProvider';
  */
 export default async function asyncWithLDProvider(config: AsyncProviderConfig) {
   const { clientSideID, options } = config;
-  const context = getContextOrUser(config) ?? { anonymous: true, kind: 'user' };
+  const ldContext = getContextOrUser(config) ?? { anonymous: true, kind: 'user' };
 
-  const ldClient = initialize(clientSideID, context, { ...wrapperOptions, ...options });
+  const ldClient = initialize(clientSideID, ldContext, { ...wrapperOptions, ...options });
 
-  return asyncWithCustomLDProvider(config, ldClient, reactContext);
+  return asyncWithCustomLDProvider(config, ldClient, context);
 }
