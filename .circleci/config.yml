@@ -1,10 +1,19 @@
 version: 2
+orbs:
+  cloudsmith: pagerduty/cloudsmith@1.0.5
+
 jobs:
   build:
     docker:
       - image: cimg/node:18.12.1
+    executor: cloudsmith/default
     steps:
       - checkout
+      - run:
+          name: Set Environment Variables
+          command: |
+            echo "export NPM_TOKEN=${CLOUDSMITH_NPM_TOKEN}" >> "$BASH_ENV"
+            source "$BASH_ENV"
 
       - run: npm install
       - run: npm run lint
@@ -20,7 +29,41 @@ jobs:
       - run:
           name: packaging test
           command: ./scripts/packaging-test.sh
-      - store_test_results:
-          path: reports/junit/
-      - store_artifacts:
-          path: reports/junit/
+      - persist_to_workspace:
+          root: .
+          paths:
+            - lib
+            - node_modules
+  publish:
+    docker:
+      - image: cimg/node:18.12.1
+    executor: cloudsmith/default
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: npm version from-git
+      - run: npm publish
+
+workflows:
+  version: 2
+  package:
+    jobs:
+      - build:
+          context:
+            - PagerDuty
+            - Cloudsmith
+          filters: # required since `publish` has tag filters AND requires `build`
+            tags:
+              only: /.*/
+      - publish:
+          context:
+            - PagerDuty
+            - Cloudsmith
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
