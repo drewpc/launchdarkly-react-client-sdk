@@ -42,14 +42,20 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - cloudsmith/ensure-api-key
+      - cloudsmith/install-cli
       - run:
           name: Set Environment Variables
           command: |
-            echo "export NPM_TOKEN=${CLOUDSMITH_RW_USER_API_KEY}" >> "$BASH_ENV"
+            echo "export NPM_TOKEN=${CLOUDSMITH_NPM_TOKEN}" >> "$BASH_ENV"
             source "$BASH_ENV"
 
       - run: npm version --no-git-tag-version $CIRCLE_TAG
-      - run: npm publish
+      - run: npm pack --pack-destination dist/
+      - cloudsmith/publish:
+          cloudsmith-repository: pagerduty/npm
+          package-path: dist/*
+          package-format: npm
 
 workflows:
   version: 2
