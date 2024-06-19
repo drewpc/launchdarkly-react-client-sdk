@@ -9,6 +9,7 @@ jobs:
     executor: cloudsmith/default
     steps:
       - checkout
+      - run: sudo apt-get update && sudo apt install pip3
       - run:
           name: Set Environment Variables
           command: |
