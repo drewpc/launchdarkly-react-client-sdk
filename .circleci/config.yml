@@ -52,6 +52,7 @@ jobs:
             source "$BASH_ENV"
 
       - run: npm version --no-git-tag-version $CIRCLE_TAG
+      - run: mkdir -p dist/
       - run: npm pack --pack-destination dist/
       - cloudsmith/publish:
           cloudsmith-repository: pagerduty/npm
