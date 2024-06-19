@@ -42,7 +42,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: npm version from-git
+      - run: npm version $CIRCLE_TAG
       - run: npm publish
 
 workflows:
@@ -64,4 +64,4 @@ workflows:
             - build
           filters:
             tags:
-              only: /.+/
+              only: /[0-9].+/
