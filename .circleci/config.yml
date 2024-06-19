@@ -42,6 +42,12 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - run:
+          name: Set Environment Variables
+          command: |
+            echo "export NPM_TOKEN=${CLOUDSMITH_NPM_TOKEN}" >> "$BASH_ENV"
+            source "$BASH_ENV"
+
       - run: npm version --no-git-tag-version $CIRCLE_TAG
       - run: npm publish
 
