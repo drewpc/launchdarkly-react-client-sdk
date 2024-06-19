@@ -42,7 +42,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: npm version $CIRCLE_TAG
+      - run: npm version --no-git-tag-version $CIRCLE_TAG
       - run: npm publish
 
 workflows:
