@@ -9,7 +9,6 @@ jobs:
     executor: cloudsmith/default
     steps:
       - checkout
-      - run: sudo apt-get update && sudo apt install pip3
       - run:
           name: Set Environment Variables
           command: |
@@ -43,6 +42,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - run: sudo apt-get update && sudo apt install python3-pip
       - cloudsmith/ensure-api-key
       - cloudsmith/install-cli
       - run:
