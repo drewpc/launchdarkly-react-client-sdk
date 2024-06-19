@@ -45,7 +45,7 @@ jobs:
       - run:
           name: Set Environment Variables
           command: |
-            echo "export NPM_TOKEN=${CLOUDSMITH_NPM_TOKEN}" >> "$BASH_ENV"
+            echo "export NPM_TOKEN=${CLOUDSMITH_RW_USER_API_KEY}" >> "$BASH_ENV"
             source "$BASH_ENV"
 
       - run: npm version --no-git-tag-version $CIRCLE_TAG
@@ -70,4 +70,6 @@ workflows:
             - build
           filters:
             tags:
-              only: /[0-9].+/
+              only: /^[0-9].+/
+            branches:
+              ignore: /.*/
