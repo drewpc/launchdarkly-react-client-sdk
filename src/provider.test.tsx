@@ -33,7 +33,7 @@ const mockInitialize = initialize as jest.Mock;
 const mockFetchFlags = fetchFlags as jest.Mock;
 const rawFlags = { 'test-flag': true, 'another-test-flag': true };
 const mockLDClient = {
-  on: jest.fn((e: string, cb: () => void) => {
+  on: jest.fn((_e: string, cb: () => void) => {
     cb();
   }),
   off: jest.fn(),
@@ -52,7 +52,6 @@ describe('LDProvider', () => {
     mockInitialize.mockImplementation(() => mockLDClient);
     mockFetchFlags.mockImplementation(() => rawFlags);
 
-    // tslint:disable-next-line: no-unsafe-any
     mockLDClient.variation.mockImplementation((_, v) => v);
     options = { ...wrapperOptions };
     previousState = {
@@ -142,10 +141,9 @@ describe('LDProvider', () => {
   });
 
   test('ld client is used if passed in as promise', async () => {
-    const context1: LDContext = { key: 'yus', kind: 'user', name: 'yus ng' };
     const context2: LDContext = { key: 'launch', kind: 'user', name: 'darkly' };
     options = { ...options, bootstrap: {} };
-    const ldClient: Promise<LDClient> = new Promise(async (resolve) => {
+    const ldClient = new Promise<LDClient>((resolve) => {
       resolve((mockLDClient as unknown) as LDClient);
 
       return;
@@ -164,7 +162,7 @@ describe('LDProvider', () => {
 
   test('ld client is created if passed in promise resolves as undefined', async () => {
     options = { ...options, bootstrap: {} };
-    const ldClient: Promise<undefined> = new Promise(async (resolve) => {
+    const ldClient = new Promise<undefined>((resolve) => {
       resolve(undefined);
 
       return;
@@ -216,7 +214,7 @@ describe('LDProvider', () => {
     const mockSetState = jest.spyOn(instance, 'setState');
 
     await instance?.componentDidMount();
-    const setStateFunction = mockSetState.mock.lastCall[0] as (p: ProviderState) => ProviderState;
+    const setStateFunction = mockSetState.mock?.lastCall?.[0] as (p: ProviderState) => ProviderState;
 
     expect(mockInitialize).toHaveBeenCalledWith(clientSideID, context, options);
     expect(setStateFunction(previousState)).toEqual({
@@ -240,7 +238,7 @@ describe('LDProvider', () => {
     const mockSetState = jest.spyOn(instance, 'setState');
 
     await instance?.componentDidMount();
-    const setStateFunction = mockSetState.mock.lastCall[0] as (p: ProviderState) => ProviderState;
+    const setStateFunction = mockSetState.mock?.lastCall?.[0] as (p: ProviderState) => ProviderState;
 
     expect(mockLDClient.on).toHaveBeenCalledWith('failed', expect.any(Function));
     expect(mockLDClient.on).toHaveBeenCalledWith('ready', expect.any(Function));
@@ -260,7 +258,7 @@ describe('LDProvider', () => {
     const mockSetState = jest.spyOn(instance, 'setState');
 
     await instance?.componentDidMount();
-    const setStateFunction = mockSetState.mock.lastCall[0] as (p: ProviderState) => ProviderState;
+    const setStateFunction = mockSetState.mock?.lastCall?.[0] as (p: ProviderState) => ProviderState;
 
     expect(mockLDClient.on).not.toHaveBeenCalledWith('failed', expect.any(Function));
     expect(mockLDClient.on).not.toHaveBeenCalledWith('ready', expect.any(Function));
@@ -390,7 +388,7 @@ describe('LDProvider', () => {
     const mockSetState = jest.spyOn(instance, 'setState');
 
     await instance.componentDidMount();
-    const setStateFunction = mockSetState.mock.lastCall[0] as (p: ProviderState) => ProviderState;
+    const setStateFunction = mockSetState.mock?.lastCall?.[0] as (p: ProviderState) => ProviderState;
 
     expect(mockInitialize).toHaveBeenCalledWith(clientSideID, context, options);
     expect(setStateFunction(previousState)).toEqual({
@@ -412,7 +410,7 @@ describe('LDProvider', () => {
     const mockSetState = jest.spyOn(instance, 'setState');
 
     await instance.componentDidMount();
-    const setStateFunction = mockSetState.mock.lastCall[0] as (p: ProviderState) => ProviderState;
+    const setStateFunction = mockSetState.mock?.lastCall?.[0] as (p: ProviderState) => ProviderState;
 
     expect(setStateFunction(previousState)).toEqual({
       flags: { testFlag: true, anotherTestFlag: true },
@@ -437,7 +435,7 @@ describe('LDProvider', () => {
   });
 
   test('subscribe to changes with camelCase', async () => {
-    mockLDClient.on.mockImplementation((e: string, cb: (c: LDFlagChangeset) => void) => {
+    mockLDClient.on.mockImplementation((_e: string, cb: (c: LDFlagChangeset) => void) => {
       cb({ 'test-flag': { current: false, previous: true } });
     });
     const props: ProviderConfig = { clientSideID };
@@ -450,7 +448,7 @@ describe('LDProvider', () => {
     const mockSetState = jest.spyOn(instance, 'setState');
 
     await instance.componentDidMount();
-    const setStateFunction = mockSetState.mock.lastCall[0] as (p: ProviderState) => ProviderState;
+    const setStateFunction = mockSetState.mock?.lastCall?.[0] as (p: ProviderState) => ProviderState;
 
     expect(mockLDClient.on).toHaveBeenCalledWith('change', expect.any(Function));
     expect(setStateFunction(previousState)).toEqual({
@@ -461,7 +459,7 @@ describe('LDProvider', () => {
   });
 
   test('subscribe to changes with kebab-case', async () => {
-    mockLDClient.on.mockImplementation((e: string, cb: (c: LDFlagChangeset) => void) => {
+    mockLDClient.on.mockImplementation((_e: string, cb: (c: LDFlagChangeset) => void) => {
       cb({ 'another-test-flag': { current: false, previous: true }, 'test-flag': { current: false, previous: true } });
     });
     const props: ProviderConfig = { clientSideID, reactOptions: { useCamelCaseFlagKeys: false } };
@@ -474,7 +472,7 @@ describe('LDProvider', () => {
     const mockSetState = jest.spyOn(instance, 'setState');
 
     await instance.componentDidMount();
-    const setStateFunction = mockSetState.mock.lastCall[0] as (p: ProviderState) => ProviderState;
+    const setStateFunction = mockSetState.mock?.lastCall?.[0] as (p: ProviderState) => ProviderState;
 
     expect(mockLDClient.on).toHaveBeenCalledWith('change', expect.any(Function));
     expect(setStateFunction(previousState)).toEqual({
@@ -515,7 +513,7 @@ describe('LDProvider', () => {
 
   test('only updates to subscribed flags are pushed to the Provider', async () => {
     mockFetchFlags.mockImplementation(() => ({ 'test-flag': 2 }));
-    mockLDClient.on.mockImplementation((e: string, cb: (c: LDFlagChangeset) => void) => {
+    mockLDClient.on.mockImplementation((_e: string, cb: (c: LDFlagChangeset) => void) => {
       cb({ 'test-flag': { current: 3, previous: 2 }, 'another-test-flag': { current: false, previous: true } });
     });
     options = {};
@@ -531,7 +529,7 @@ describe('LDProvider', () => {
     const mockSetState = jest.spyOn(instance, 'setState');
 
     await instance.componentDidMount();
-    const setStateFunction = mockSetState.mock.lastCall[0] as (p: ProviderState) => ProviderState;
+    const setStateFunction = mockSetState.mock?.lastCall?.[0] as (p: ProviderState) => ProviderState;
 
     expect(setStateFunction(previousState)).toEqual({
       flags: { testFlag: 3 },

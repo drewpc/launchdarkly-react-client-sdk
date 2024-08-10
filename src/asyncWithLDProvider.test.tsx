@@ -1,3 +1,15 @@
+import React from 'react';
+import '@testing-library/dom';
+import '@testing-library/jest-dom';
+import { render } from '@testing-library/react';
+import { initialize, LDContext, LDFlagChangeset, LDOptions } from 'launchdarkly-js-client-sdk';
+import { AsyncProviderConfig, LDReactOptions } from './types';
+import { Consumer } from './context';
+import asyncWithLDProvider from './asyncWithLDProvider';
+import wrapperOptions from './wrapperOptions';
+import { fetchFlags } from './utils';
+
+
 jest.mock('launchdarkly-js-client-sdk', () => {
   const actual = jest.requireActual('launchdarkly-js-client-sdk');
 
@@ -14,15 +26,6 @@ jest.mock('./utils', () => {
     fetchFlags: jest.fn(),
   };
 });
-
-import React from 'react';
-import { render } from '@testing-library/react';
-import { initialize, LDContext, LDFlagChangeset, LDOptions } from 'launchdarkly-js-client-sdk';
-import { AsyncProviderConfig, LDReactOptions } from './types';
-import { Consumer } from './context';
-import asyncWithLDProvider from './asyncWithLDProvider';
-import wrapperOptions from './wrapperOptions';
-import { fetchFlags } from './utils';
 
 const clientSideID = 'test-client-side-id';
 const context: LDContext = { key: 'yus', kind: 'user', name: 'yus ng' };
@@ -60,11 +63,10 @@ describe('asyncWithLDProvider', () => {
 
   beforeEach(() => {
     mockLDClient = {
-      on: jest.fn((e: string, cb: () => void) => {
+      on: jest.fn((_e: string, cb: () => void) => {
         cb();
       }),
       off: jest.fn(),
-      // tslint:disable-next-line: no-unsafe-any
       variation: jest.fn((_: string, v) => v),
       waitForInitialization: jest.fn(),
     };
@@ -210,7 +212,7 @@ describe('asyncWithLDProvider', () => {
   });
 
   test('subscribe to changes with camelCase', async () => {
-    mockLDClient.on.mockImplementation((e: string, cb: (c: LDFlagChangeset) => void) => {
+    mockLDClient.on.mockImplementation((_e: string, cb: (c: LDFlagChangeset) => void) => {
       cb({ 'test-flag': { current: false, previous: true } });
     });
 
@@ -222,7 +224,7 @@ describe('asyncWithLDProvider', () => {
   });
 
   test('subscribe to changes with kebab-case', async () => {
-    mockLDClient.on.mockImplementation((e: string, cb: (c: LDFlagChangeset) => void) => {
+    mockLDClient.on.mockImplementation((_e: string, cb: (c: LDFlagChangeset) => void) => {
       cb({ 'another-test-flag': { current: false, previous: true }, 'test-flag': { current: false, previous: true } });
     });
     const receivedNode = await renderWithConfig({ clientSideID, reactOptions: { useCamelCaseFlagKeys: false } });
@@ -232,7 +234,7 @@ describe('asyncWithLDProvider', () => {
   });
 
   test('consecutive flag changes gets stored in context correctly', async () => {
-    mockLDClient.on.mockImplementationOnce((e: string, cb: (c: LDFlagChangeset) => void) => {
+    mockLDClient.on.mockImplementationOnce((_e: string, cb: (c: LDFlagChangeset) => void) => {
       cb({ 'another-test-flag': { current: false, previous: true } });
 
       // simulate second update
@@ -247,7 +249,7 @@ describe('asyncWithLDProvider', () => {
 
   test('ldClient bootstraps correctly', async () => {
     // don't subscribe to changes to test bootstrap
-    mockLDClient.on.mockImplementation((e: string, cb: (c: LDFlagChangeset) => void) => {
+    mockLDClient.on.mockImplementation((_e: string, _cb: (c: LDFlagChangeset) => void) => {
       return;
     });
     options = {
@@ -261,7 +263,7 @@ describe('asyncWithLDProvider', () => {
   });
 
   test('undefined bootstrap', async () => {
-    mockLDClient.on.mockImplementation((e: string, cb: (c: LDFlagChangeset) => void) => {
+    mockLDClient.on.mockImplementation((_e: string, _cb: (c: LDFlagChangeset) => void) => {
       return;
     });
     options = { ...options, bootstrap: undefined };
@@ -273,7 +275,7 @@ describe('asyncWithLDProvider', () => {
   });
 
   test('bootstrap used if there is a timeout', async () => {
-    mockLDClient.on.mockImplementation((e: string, cb: (c: LDFlagChangeset) => void) => {
+    mockLDClient.on.mockImplementation((_e: string, _cb: (c: LDFlagChangeset) => void) => {
       return;
     });
     rejectWaitForInitialization();
@@ -287,7 +289,7 @@ describe('asyncWithLDProvider', () => {
 
   test('ldClient bootstraps with empty flags', async () => {
     // don't subscribe to changes to test bootstrap
-    mockLDClient.on.mockImplementation((e: string, cb: (c: LDFlagChangeset) => void) => {
+    mockLDClient.on.mockImplementation((_e: string, _cb: (c: LDFlagChangeset) => void) => {
       return;
     });
     options = {
@@ -299,7 +301,7 @@ describe('asyncWithLDProvider', () => {
 
   test('ldClient bootstraps correctly with kebab-case', async () => {
     // don't subscribe to changes to test bootstrap
-    mockLDClient.on.mockImplementation((e: string, cb: (c: LDFlagChangeset) => void) => {
+    mockLDClient.on.mockImplementation((_e: string, _cb: (c: LDFlagChangeset) => void) => {
       return;
     });
     options = {
@@ -340,7 +342,7 @@ describe('asyncWithLDProvider', () => {
   });
 
   test('only updates to subscribed flags are pushed to the Provider', async () => {
-    mockLDClient.on.mockImplementation((e: string, cb: (c: LDFlagChangeset) => void) => {
+    mockLDClient.on.mockImplementation((_e: string, cb: (c: LDFlagChangeset) => void) => {
       cb({ 'test-flag': { current: false, previous: true }, 'another-test-flag': { current: false, previous: true } });
     });
     options = {};

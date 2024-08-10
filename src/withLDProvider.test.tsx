@@ -33,7 +33,7 @@ const mockInitialize = initialize as jest.Mock;
 const mockFetchFlags = fetchFlags as jest.Mock;
 const rawFlags = { 'test-flag': true, 'another-test-flag': true };
 const mockLDClient = {
-  on: jest.fn((e: string, cb: () => void) => {
+  on: jest.fn((_e: string, cb: () => void) => {
     cb();
   }),
   allFlags: jest.fn().mockReturnValue({}),
@@ -48,7 +48,6 @@ describe('withLDProvider', () => {
   beforeEach(() => {
     mockInitialize.mockImplementation(() => mockLDClient);
     mockFetchFlags.mockImplementation(() => rawFlags);
-    // tslint:disable-next-line: no-unsafe-any
     mockLDClient.variation.mockImplementation((_, v) => v);
     options = { bootstrap: {}, ...wrapperOptions };
     previousState = {
@@ -86,7 +85,7 @@ describe('withLDProvider', () => {
     const mockSetState = jest.spyOn(instance, 'setState');
 
     await instance.componentDidMount();
-    const setStateFunction = mockSetState.mock.lastCall[0] as (p: ProviderState) => ProviderState;
+    const setStateFunction = mockSetState.mock?.lastCall?.[0] as (p: ProviderState) => ProviderState;
 
     expect(mockInitialize).toHaveBeenCalledWith(clientSideID, context, options);
     expect(setStateFunction(previousState)).toEqual({
@@ -103,7 +102,7 @@ describe('withLDProvider', () => {
     const mockSetState = jest.spyOn(instance, 'setState');
 
     await instance.componentDidMount();
-    const setStateFunction = mockSetState.mock.lastCall[0] as (p: ProviderState) => ProviderState;
+    const setStateFunction = mockSetState.mock?.lastCall?.[0] as (p: ProviderState) => ProviderState;
 
     expect(setStateFunction(previousState)).toEqual({
       flags: { testFlag: true, anotherTestFlag: true },
@@ -123,7 +122,7 @@ describe('withLDProvider', () => {
   });
 
   test('subscribe to changes with camelCase', async () => {
-    mockLDClient.on.mockImplementation((e: string, cb: (c: LDFlagChangeset) => void) => {
+    mockLDClient.on.mockImplementation((_e: string, cb: (c: LDFlagChangeset) => void) => {
       cb({ 'test-flag': { current: false, previous: true } });
     });
     const LaunchDarklyApp = withLDProvider({ clientSideID })(App);
@@ -131,7 +130,7 @@ describe('withLDProvider', () => {
     const mockSetState = jest.spyOn(instance, 'setState');
 
     await instance.componentDidMount();
-    const setStateFunction = mockSetState.mock.lastCall[0] as (p: ProviderState) => ProviderState;
+    const setStateFunction = mockSetState.mock?.lastCall?.[0] as (p: ProviderState) => ProviderState;
 
     expect(mockLDClient.on).toHaveBeenCalledWith('change', expect.any(Function));
     expect(setStateFunction(previousState)).toEqual({
@@ -142,7 +141,7 @@ describe('withLDProvider', () => {
   });
 
   test('subscribe to changes with kebab-case', async () => {
-    mockLDClient.on.mockImplementation((e: string, cb: (c: LDFlagChangeset) => void) => {
+    mockLDClient.on.mockImplementation((_e: string, cb: (c: LDFlagChangeset) => void) => {
       cb({ 'another-test-flag': { current: false, previous: true }, 'test-flag': { current: false, previous: true } });
     });
     const LaunchDarklyApp = withLDProvider({ clientSideID, reactOptions: { useCamelCaseFlagKeys: false } })(App);
@@ -150,7 +149,7 @@ describe('withLDProvider', () => {
     const mockSetState = jest.spyOn(instance, 'setState');
 
     await instance.componentDidMount();
-    const setStateFunction = mockSetState.mock.lastCall[0] as (p: ProviderState) => ProviderState;
+    const setStateFunction = mockSetState.mock?.lastCall?.[0] as (p: ProviderState) => ProviderState;
 
     expect(mockLDClient.on).toHaveBeenCalledWith('change', expect.any(Function));
     expect(setStateFunction(previousState)).toEqual({
