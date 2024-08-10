@@ -1,8 +1,7 @@
 import { createContext } from 'react';
 import { ReactSdkContext } from './types';
 
-const reactSdkContextFactory = () =>
-  createContext<ReactSdkContext>({ flags: {}, flagKeyMap: {}, ldClient: undefined });
+const reactSdkContextFactory = () => createContext<ReactSdkContext>({ flags: {}, flagKeyMap: {}, ldClient: undefined });
 /**
  * @ignore
  */

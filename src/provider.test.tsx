@@ -134,7 +134,7 @@ describe('LDProvider', () => {
 
   test('ld client is used if passed in', async () => {
     options = { ...options, bootstrap: {} };
-    const ldClient = (mockLDClient as unknown) as LDClient;
+    const ldClient = mockLDClient as unknown as LDClient;
     mockInitialize.mockClear();
     const props: ProviderConfig = { clientSideID, ldClient };
     const LaunchDarklyApp = (
@@ -152,7 +152,7 @@ describe('LDProvider', () => {
     const context2: LDContext = { key: 'launch', kind: 'user', name: 'darkly' };
     options = { ...options, bootstrap: {} };
     const ldClient = new Promise<LDClient>((resolve) => {
-      resolve((mockLDClient as unknown) as LDClient);
+      resolve(mockLDClient as unknown as LDClient);
 
       return;
     });
@@ -559,7 +559,7 @@ describe('LDProvider', () => {
     };
     const props: ProviderConfig = {
       clientSideID,
-      ldClient: (customLDClient as unknown) as LDClient,
+      ldClient: customLDClient as unknown as LDClient,
       reactOptions: {
         reactContext: CustomContext,
       },
@@ -570,8 +570,12 @@ describe('LDProvider', () => {
     const LaunchDarklyApp = (
       <LDProvider {...props}>
         <CustomContext.Consumer>
-          {({flags}) => {
-            return <span>flag is {flags.contextTestFlag === undefined ? 'undefined' : JSON.stringify(flags.contextTestFlag)}</span>;
+          {({ flags }) => {
+            return (
+              <span>
+                flag is {flags.contextTestFlag === undefined ? 'undefined' : JSON.stringify(flags.contextTestFlag)}
+              </span>
+            );
           }}
         </CustomContext.Consumer>
       </LDProvider>
