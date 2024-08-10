@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { ReactSdkContext } from './context';
 import { LDClient, LDFlagSet } from 'launchdarkly-js-client-sdk';
-import { defaultReactOptions } from './types';
+import { defaultReactOptions, ReactSdkContext } from './types';
 
 /**
  * Controls the props the wrapped component receives from the `LDConsumer` HOC.
@@ -45,7 +44,7 @@ export interface LDProps {
  */
 function withLDConsumer(options: ConsumerOptions = { clientOnly: false }) {
   return function withLDConsumerHoc<P>(WrappedComponent: React.ComponentType<P & LDProps>) {
-    const ReactContext = options.reactContext || defaultReactOptions.reactContext;
+    const ReactContext = options.reactContext ?? defaultReactOptions.reactContext;
 
     return (props: P) => (
       <ReactContext.Consumer>

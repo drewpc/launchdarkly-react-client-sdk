@@ -7,4 +7,7 @@ module.exports = {
   testRegex: '.*\\.test\\.(ts|tsx)$',
   testPathIgnorePatterns: ['/node_modules/', '/examples/'],
   testEnvironment: 'jest-environment-jsdom-global',
+  snapshotFormat: {
+    printBasicPrototype: false,
+  },
 };

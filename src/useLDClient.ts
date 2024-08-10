@@ -1,5 +1,5 @@
-import { useContext } from 'react';
-import context from './context';
+import React, { useContext } from 'react';
+import { defaultReactOptions, ReactSdkContext } from './types';
 
 // tslint:disable:max-line-length
 /**
@@ -8,13 +8,14 @@ import context from './context';
  * context set up by `withLDProvider`. You will still need to use the `withLDProvider` HOC
  * to initialise the react sdk to use this custom hook.
  *
+ * @param reactContext If specified, the custom React context will be used.
+ *
  * @return The `launchdarkly-js-client-sdk` `LDClient` object
  */
-const useLDClient = () => useLDClientWithContext(context);
-export default useLDClient;
-
-export const useLDClientWithContext = (customContext: React.Context<ReactSdkContext>) => {
-  const { ldClient } = useContext(context);
+const useLDClient = (reactContext?: React.Context<ReactSdkContext>) => {
+  const { ldClient } = useContext(reactContext ?? defaultReactOptions.reactContext);
 
   return ldClient;
 };
+
+export default useLDClient;

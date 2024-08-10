@@ -30,6 +30,9 @@ export interface LDReactOptions {
    */
   sendEventsOnFlagRead?: boolean;
 
+  /**
+   * The react context to use within the provider objects.
+   */
   reactContext?: React.Context<ReactSdkContext>;
 }
 

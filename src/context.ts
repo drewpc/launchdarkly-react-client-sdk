@@ -1,10 +1,12 @@
 import { createContext } from 'react';
 import { ReactSdkContext } from './types';
 
+const reactSdkContextFactory = () =>
+  createContext<ReactSdkContext>({ flags: {}, flagKeyMap: {}, ldClient: undefined });
 /**
  * @ignore
  */
-const context = createContext<ReactSdkContext>({ flags: {}, flagKeyMap: {}, ldClient: undefined });
+const context = reactSdkContextFactory();
 const {
   /**
    * @ignore
@@ -16,5 +18,5 @@ const {
   Consumer,
 } = context;
 
-export { Provider, Consumer, ReactSdkContext };
+export { Provider, Consumer, ReactSdkContext, reactSdkContextFactory };
 export default context;

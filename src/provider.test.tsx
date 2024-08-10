@@ -16,13 +16,21 @@ jest.mock('./utils', () => {
     fetchFlags: jest.fn(),
   };
 });
-jest.mock('./context', () => ({ Provider: 'Provider' }));
+jest.mock('./context', () => {
+  const originalModule = jest.requireActual('./context');
 
-import React, { Component, createContext } from 'react';
+  return {
+    ...originalModule,
+    Provider: 'Provider',
+  };
+});
+
+import React, { Component } from 'react';
+import { render } from '@testing-library/react';
 import { create } from 'react-test-renderer';
-import { initialize, LDClient, LDContext, LDFlagChangeset, LDFlagValue, LDOptions } from 'launchdarkly-js-client-sdk';
-import { LDReactOptions, EnhancedComponent, ProviderConfig, ReactSdkContext } from './types';
-import { ReactSdkContext as HocState } from './context';
+import { initialize, LDClient, LDContext, LDFlagChangeset, LDOptions } from 'launchdarkly-js-client-sdk';
+import { LDReactOptions, EnhancedComponent, ProviderConfig } from './types';
+import { ReactSdkContext as HocState, reactSdkContextFactory } from './context';
 import LDProvider from './provider';
 import { fetchFlags } from './utils';
 import wrapperOptions from './wrapperOptions';
@@ -538,19 +546,15 @@ describe('LDProvider', () => {
     });
   });
 
-  test('multiple contexts do not conflict with each other', async () => {
-    const CustomContext = createContext<ReactSdkContext>({
-      flags: {},
-      flagKeyMap: {},
-      ldClient: undefined,
-    });
+  test('custom context is provided to consumer', async () => {
+    const CustomContext = reactSdkContextFactory();
     const customLDClient = {
-      on: jest.fn((e: string, cb: () => void) => {
+      on: jest.fn((_: string, cb: () => void) => {
         cb();
       }),
       off: jest.fn(),
-      allFlags: jest.fn().mockReturnValue({ hidden: true }),
-      variation: jest.fn(),
+      allFlags: jest.fn().mockReturnValue({ 'context-test-flag': true }),
+      variation: jest.fn((_: string, v) => v),
       waitForInitialization: jest.fn(),
     };
     const props: ProviderConfig = {
@@ -560,28 +564,20 @@ describe('LDProvider', () => {
         reactContext: CustomContext,
       },
     };
-    const ContextApp = () => (
-      <div>
-        <CustomContext.Consumer>
-          {({ flags }) => (
-            <div>
-              <span id="hiddenflag">hidden flag is {Object.keys(flags)}</span>
-            </div>
-          )}
-        </CustomContext.Consumer>
-      </div>
-    );
+    const originalUtilsModule = jest.requireActual('./utils');
+    mockFetchFlags.mockImplementation(originalUtilsModule.fetchFlags);
+
     const LaunchDarklyApp = (
       <LDProvider {...props}>
-        <ContextApp />
+        <CustomContext.Consumer>
+          {({flags}) => {
+            return <span>flag is {flags.contextTestFlag === undefined ? 'undefined' : JSON.stringify(flags.contextTestFlag)}</span>;
+          }}
+        </CustomContext.Consumer>
       </LDProvider>
     );
 
-    const rootObj = create(LaunchDarklyApp).root;
-    const instance = rootObj.findByType(LDProvider).instance as EnhancedComponent;
-    await instance.componentDidMount();
-
-    expect(customLDClient.allFlags).toHaveBeenCalled();
-    expect(rootObj.findByProps({ id: 'hiddenflag' }).children).toEqual(['hidden flag is true']);
+    const { findByText } = render(LaunchDarklyApp);
+    expect(await findByText('flag is true')).not.toBeNull();
   });
 });
