@@ -1,5 +1,5 @@
-import { useContext } from 'react';
-import context from './context';
+import React, { useContext } from 'react';
+import context, { ReactSdkContext } from './context';
 
 /**
  * Provides the LaunchDarkly client initialization error, if there was one.
@@ -7,7 +7,11 @@ import context from './context';
  * @return The `launchdarkly-js-client-sdk` `LDClient` initialization error
  */
 export default function useLDClientError() {
-  const { error } = useContext(context);
+  return useLDClientErrorWithContext(context);
+}
+
+export function useLDClientErrorWithContext(customContext: React.Context<ReactSdkContext>) {
+  const { error } = useContext(customContext);
 
   return error;
 }

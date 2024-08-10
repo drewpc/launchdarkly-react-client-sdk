@@ -18,10 +18,10 @@ jest.mock('./utils', () => {
 });
 jest.mock('./context', () => ({ Provider: 'Provider' }));
 
-import React, { Component } from 'react';
+import React, { Component, createContext } from 'react';
 import { create } from 'react-test-renderer';
-import { initialize, LDClient, LDContext, LDFlagChangeset, LDOptions } from 'launchdarkly-js-client-sdk';
-import { LDReactOptions, EnhancedComponent, ProviderConfig } from './types';
+import { initialize, LDClient, LDContext, LDFlagChangeset, LDFlagValue, LDOptions } from 'launchdarkly-js-client-sdk';
+import { LDReactOptions, EnhancedComponent, ProviderConfig, ReactSdkContext } from './types';
 import { ReactSdkContext as HocState } from './context';
 import LDProvider from './provider';
 import { fetchFlags } from './utils';
@@ -538,5 +538,52 @@ describe('LDProvider', () => {
       unproxiedFlags: { 'test-flag': 3 },
       flagKeyMap: { testFlag: 'test-flag' },
     });
+  });
+
+  test('multiple contexts do not conflict with each other', async () => {
+    const CustomContext = createContext<ReactSdkContext>({
+      flags: {},
+      flagKeyMap: {},
+      ldClient: undefined,
+    });
+    const customLDClient = {
+      on: jest.fn((e: string, cb: () => void) => {
+        cb();
+      }),
+      off: jest.fn(),
+      allFlags: jest.fn().mockReturnValue({ hidden: true }),
+      variation: jest.fn(),
+      waitForInitialization: jest.fn(),
+    };
+    const props: ProviderConfig = {
+      clientSideID,
+      ldClient: (customLDClient as unknown) as LDClient,
+      reactOptions: {
+        reactContext: CustomContext,
+      },
+    };
+    const ContextApp = () => (
+      <div>
+        <CustomContext.Consumer>
+          {({ flags }) => (
+            <div>
+              <span id="hiddenflag">hidden flag is {Object.keys(flags)}</span>
+            </div>
+          )}
+        </CustomContext.Consumer>
+      </div>
+    );
+    const LaunchDarklyApp = (
+      <LDProvider {...props}>
+        <ContextApp />
+      </LDProvider>
+    );
+
+    const rootObj = create(LaunchDarklyApp).root;
+    const instance = rootObj.findByType(LDProvider).instance as EnhancedComponent;
+    await instance.componentDidMount();
+
+    expect(customLDClient.allFlags).toHaveBeenCalled();
+    expect(rootObj.findByProps({ id: 'hiddenflag' }).children).toEqual(['hidden flag is true']);
   });
 });

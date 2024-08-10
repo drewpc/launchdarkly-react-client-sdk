@@ -144,7 +144,13 @@ class LDProvider extends Component<PropsWithChildren<ProviderConfig>, ProviderSt
   render() {
     const { flags, flagKeyMap, ldClient, error } = this.state;
 
-    return <Provider value={{ flags, flagKeyMap, ldClient, error }}>{this.props.children}</Provider>;
+    const { reactContext } = this.getReactOptions();
+
+    return (
+      <reactContext.Provider value={{ flags, flagKeyMap, ldClient, error }}>
+        {this.props.children}
+      </reactContext.Provider>
+    );
   }
 }
 

@@ -1,5 +1,6 @@
 import { LDClient, LDContext, LDFlagSet, LDOptions } from 'launchdarkly-js-client-sdk';
 import * as React from 'react';
+import defaultReactContext from './context';
 
 /**
  * Initialization options for the LaunchDarkly React SDK. These are in addition to the options exposed
@@ -28,12 +29,18 @@ export interface LDReactOptions {
    * events will be sent by default.
    */
   sendEventsOnFlagRead?: boolean;
+
+  reactContext?: React.Context<ReactSdkContext>;
 }
 
 /**
  * Contains default values for the `reactOptions` object.
  */
-export const defaultReactOptions = { useCamelCaseFlagKeys: true, sendEventsOnFlagRead: true };
+export const defaultReactOptions = {
+  useCamelCaseFlagKeys: true,
+  sendEventsOnFlagRead: true,
+  reactContext: defaultReactContext,
+};
 
 /**
  * Configuration object used to initialise LaunchDarkly's JS client.

@@ -1,5 +1,5 @@
-import { useContext } from 'react';
-import context from './context';
+import React, { useContext } from 'react';
+import context, { ReactSdkContext } from './context';
 
 // tslint:disable:max-line-length
 /**
@@ -11,10 +11,11 @@ import context from './context';
  * @return The `launchdarkly-js-client-sdk` `LDClient` object
  */
 // tslint:enable:max-line-length
-const useLDClient = () => {
+const useLDClient = () => useLDClientWithContext(context);
+export default useLDClient;
+
+export const useLDClientWithContext = (customContext: React.Context<ReactSdkContext>) => {
   const { ldClient } = useContext(context);
 
   return ldClient;
 };
-
-export default useLDClient;
