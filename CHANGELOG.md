@@ -2,6 +2,13 @@
 
 All notable changes to the LaunchDarkly Client-side SDK for React will be documented in this file. For the source code for versions 2.13.0 and earlier, see the corresponding tags in the [js-client-sdk](https://github.com/launchdarkly/js-client-sdk) repository; this code was previously in a monorepo package there. See also the [JavaScript SDK changelog](https://github.com/launchdarkly/js-client-sdk/blob/main/CHANGELOG.md), since the React SDK inherits all of the underlying functionality of the JavaScript SDK; this file covers only changes that are specific to the React interface. This project adheres to [Semantic Versioning](http://semver.org).
 
+## [3.5.0](https://github.com/drewpc/launchdarkly-react-client-sdk/compare/launchdarkly-react-client-sdk-v3.4.0...launchdarkly-react-client-sdk-v3.5.0) (2024-09-05)
+
+
+### Features
+
+* Support a pre-initialized client using asyncWithLDProvider. ([#310](https://github.com/drewpc/launchdarkly-react-client-sdk/issues/310)) ([6f3ad5c](https://github.com/drewpc/launchdarkly-react-client-sdk/commit/6f3ad5caa600a596c6c1f46621e971ff5bef9cbb))
+
 ## [3.4.0](https://github.com/launchdarkly/react-client-sdk/compare/launchdarkly-react-client-sdk-v3.3.2...launchdarkly-react-client-sdk-v3.4.0) (2024-08-02)
 
 
