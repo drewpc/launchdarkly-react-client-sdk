@@ -35,6 +35,11 @@ jobs:
         run: npm test
       - name: Lint
         run: npm run lint
+      - name: Install Codecov CLI as binary
+        run: |
+          # Replace 'linux' below with the appropriate OS (alpine, linux, macos, windows)
+          curl -Os https://cli.codecov.io/latest/linux/codecov
+          chmod +x codecov
       - name: Codecov
         run: >
           codecov --enterprise-url https://codecov.pd-staging.com
