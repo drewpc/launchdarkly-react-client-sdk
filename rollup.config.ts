@@ -19,7 +19,7 @@ const plugins = [
         slug: "drewpc/launcdarkly-react-client-sdk"
       },
       //enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
-      enableBundleAnalysis: false,
+      enableBundleAnalysis: true,
       bundleName: "launchdarkly-react-client-sdk",
       uploadToken: process.env.CODECOV_TOKEN,
     }),
