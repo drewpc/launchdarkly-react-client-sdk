@@ -41,4 +41,4 @@ jobs:
           curl -Os https://cli.codecov.io/latest/linux/codecov
           chmod +x codecov
       - name: Codecov
-        run: ./codecov --enterprise-url https://codecov.pd-staging.com upload-process --slug "drewpc/launchdarkly-react-client-sdk" --fail-on-error -t $CODECOV_TOKEN -f coverage
+        run: ./codecov --enterprise-url https://codecov.pd-staging.com upload-process --slug "drewpc/launchdarkly-react-client-sdk" --fail-on-error -t "${{ secrets.CODECOV_TOKEN }}" -f coverage
