@@ -45,4 +45,4 @@ jobs:
       - name: Upload coverage files to Codecov
         run: ./codecov --enterprise-url https://codecov.pd-staging.com upload-process --slug "drewpc/launchdarkly-react-client-sdk" --fail-on-error -t "${{ secrets.CODECOV_TOKEN }}"
       - name: Upload test result files to Codecov
-        run: ./codecov --enterprise-url https://codecov.pd-staging.com do-upload --slug "drewpc/launchdarkly-react-client-sdk" --fail-on-error -t "${{ secrets.CODECOV_TOKEN }}"
+        run: ./codecov --enterprise-url https://codecov.pd-staging.com do-upload --slug "drewpc/launchdarkly-react-client-sdk" --fail-on-error -t "${{ secrets.CODECOV_TOKEN }}" --report-type test_results
