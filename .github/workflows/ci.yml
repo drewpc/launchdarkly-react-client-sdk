@@ -42,7 +42,7 @@ jobs:
           chmod +x codecov
       - name: Codecov
         run: >
-          codecov --enterprise-url https://codecov.pd-staging.com
+          ./codecov --enterprise-url https://codecov.pd-staging.com
             upload-process
             --slug "drewpc/launchdarkly-react-client-sdk"
             --fail-on-error
