@@ -14,4 +14,4 @@ yarn.lock
 package-lock.json
 .npmrc
 docs/
-coverage/
+test-reports/

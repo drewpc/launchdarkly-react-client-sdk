@@ -26,8 +26,8 @@
     "!**/__snapshots__"
   ],
   "scripts": {
-    "test": "jest --coverage",
-    "test:junit": "jest --ci --coverage",
+    "test": "jest",
+    "test:junit": "jest --ci",
     "clean": "rimraf lib/*",
     "rb": "rollup -c --configPlugin typescript",
     "rbw": "npm run rb --watch",
