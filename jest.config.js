@@ -1,5 +1,10 @@
 module.exports = {
-  reporters: ['default'],
+  reporters: [
+    'default',
+    ["jest-junit", {
+      "outputName": "junit.xml"
+    }]
+  ],
   moduleFileExtensions: ['ts', 'tsx', 'js'],
   transform: {
     '\\.(ts|tsx)$': 'ts-jest',
