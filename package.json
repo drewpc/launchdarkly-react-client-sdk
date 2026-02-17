@@ -26,8 +26,8 @@
     "!**/__snapshots__"
   ],
   "scripts": {
-    "test": "jest --coverage",
-    "test:junit": "jest --ci --reporters=default --coverage",
+    "test": "jest",
+    "test:junit": "jest --ci",
     "clean": "rimraf lib/*",
     "rb": "rollup -c --configPlugin typescript",
     "rbw": "npm run rb --watch",
@@ -69,6 +69,7 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-environment-jsdom-global": "^4.0.0",
+    "jest-junit": "^16.0.0",
     "prettier": "^3.3.3",
     "prop-types": "^15.7.2",
     "react": "^18.0.0",
